@@ -1560,7 +1560,7 @@ namespace Ultraviolet.Tests.Graphics.Graphics2D.Text
         
         [Test]
         [Category("Rendering")]
-        [Description("Foo")]
+        [Description("Ensures that the text renderer assigns correct source indices to shaped text characters.")]
         public void TextRenderer_AssignsCorrectSourceIndicesToShapedText()
         {
             var content = new TextRendererTestContent(
@@ -1598,9 +1598,9 @@ namespace Ultraviolet.Tests.Graphics.Graphics2D.Text
                             if (cmd == TextLayoutCommandType.Text)
                             {
                                 var textCmd = (TextLayoutTextCommand*)content.TextLayoutResult.Data;
-                                var glyphOffset = textCmd->GlyphOffset;
-                                var glyphLength = textCmd->GlyphLength;
-                                var text = source.CreateShapedStringSegmentFromSubstring(glyphOffset, glyphLength);
+                                var shapedOffset = textCmd->ShapedOffset;
+                                var shapedLength = textCmd->ShapedLength;
+                                var text = source.CreateShapedStringSegmentFromSubstring(shapedOffset, shapedLength);
                                 for (int j = 0; j < text.Length; j++)
                                 {
                                     var sourceIndex = text[j].SourceIndex;
