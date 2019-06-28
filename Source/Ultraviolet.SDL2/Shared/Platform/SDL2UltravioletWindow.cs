@@ -130,6 +130,14 @@ namespace Ultraviolet.SDL2.Platform
         }
 
         /// <inheritdoc/>
+        public void WarpMouseWithinWindow(Int32 x, Int32 y)
+        {
+            Contract.EnsureNotDisposed(this, Disposed);
+
+            SDL_WarpMouseInWindow(ptr, x, y);
+        }
+
+        /// <inheritdoc/>
         public void SetFullscreenDisplayMode(DisplayMode displayMode)
         {
             Contract.EnsureNotDisposed(this, Disposed);
@@ -1113,9 +1121,16 @@ namespace Ultraviolet.SDL2.Platform
                 return false;
 
             win32CachedStyle = Win32Native.GetWindowLongPtr(hwnd, Win32Native.GWL_STYLE);
-
-            var style = (UInt32)win32CachedStyle & ~(Win32Native.WS_DLGFRAME | Win32Native.WS_BORDER);
-            Win32Native.SetWindowLongPtr(hwnd, Win32Native.GWL_STYLE, (IntPtr)style);
+            if (Environment.Is64BitProcess)
+            {
+                var style = (UInt64)win32CachedStyle & ~(Win32Native.WS_DLGFRAME | Win32Native.WS_BORDER);
+                Win32Native.SetWindowLongPtr(hwnd, Win32Native.GWL_STYLE, new IntPtr((void*)style));
+            }
+            else
+            {
+                var style = (UInt32)win32CachedStyle & ~(Win32Native.WS_DLGFRAME | Win32Native.WS_BORDER);
+                Win32Native.SetWindowLongPtr(hwnd, Win32Native.GWL_STYLE, new IntPtr((void*)style));
+            }
 
             return true;
         }

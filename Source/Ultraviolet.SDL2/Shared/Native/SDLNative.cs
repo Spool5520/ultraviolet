@@ -31,6 +31,10 @@ namespace Ultraviolet.SDL2.Native
         private static readonly NativeLibrary lib = new NativeLibrary(
             UltravioletPlatformInfo.CurrentPlatform == UltravioletPlatform.Windows ? "SDL2" : "libSDL2");
 #endif
+
+        public const Int32 SDL_QUERY = -1;
+        public const Int32 SDL_DISABLE = 0;
+        public const Int32 SDL_ENABLE = 1;
                 
 #if ANDROID || IOS
         [DllImport(LIBRARY, EntryPoint="SDL_GetError", CallingConvention = CallingConvention.Cdecl)]
@@ -1317,6 +1321,39 @@ namespace Ultraviolet.SDL2.Native
         private delegate void SDL_freeDelegate(IntPtr mem);
         private static readonly SDL_freeDelegate pSDL_free = lib.LoadFunction<SDL_freeDelegate>("SDL_free");
         public static void SDL_free(IntPtr mem) => pSDL_free(mem);
+#endif
+
+#if ANDROID || IOS
+        [DllImport(LIBRARY, EntryPoint="SDL_GetRelativeMouseMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern Boolean SDL_GetRelativeMouseMode();
+#else
+        [MonoNativeFunctionWrapper]
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate Boolean SDL_GetRelativeMouseModeDelegate();
+        private static readonly SDL_GetRelativeMouseModeDelegate pSDL_GetRelativeMouseMode = lib.LoadFunction<SDL_GetRelativeMouseModeDelegate>("SDL_GetRelativeMouseMode");
+        public static Boolean SDL_GetRelativeMouseMode() => pSDL_GetRelativeMouseMode();
+#endif
+
+#if ANDROID || IOS
+        [DllImport(LIBRARY, EntryPoint="SDL_SetRelativeMouseMode", CallingConvention = CallingConvention.Cdecl)]
+        public static extern Int32 SDL_SetRelativeMouseMode(Boolean enabled);
+#else
+        [MonoNativeFunctionWrapper]
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate Int32 SDL_SetRelativeMouseModeDelegate(Boolean enabled);
+        private static readonly SDL_SetRelativeMouseModeDelegate pSDL_SetRelativeMouseMode = lib.LoadFunction<SDL_SetRelativeMouseModeDelegate>("SDL_SetRelativeMouseMode");
+        public static Int32 SDL_SetRelativeMouseMode(Boolean enabled) => pSDL_SetRelativeMouseMode(enabled);
+#endif
+
+#if ANDROID || IOS
+        [DllImport(LIBRARY, EntryPoint="SDL_WarpMouseInWindow", CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SDL_WarpMouseInWindow(IntPtr window, Int32 x, Int32 y);
+#else
+        [MonoNativeFunctionWrapper]
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate void SDL_WarpMouseInWindowDelegate(IntPtr window, Int32 x, Int32 y);
+        private static readonly SDL_WarpMouseInWindowDelegate pSDL_WarpMouseInWindow = lib.LoadFunction<SDL_WarpMouseInWindowDelegate>("SDL_WarpMouseInWindow");
+        public static void SDL_WarpMouseInWindow(IntPtr window, Int32 x, Int32 y) => pSDL_WarpMouseInWindow(window, x, y);
 #endif
     }
 #pragma warning restore 1591
